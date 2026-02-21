@@ -6,6 +6,7 @@ datasource db {
   provider = "postgresql"
 }
 
+
 model ManagementCompany {
   id                    String   @id @default(uuid())
   legal_name            String
