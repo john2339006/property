@@ -44,10 +44,16 @@ export default function PropertiesPage() {
                 管理所有房产单元信息，包括状态、业主和变更历史。
               </p>
             </div>
-            <button className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-lg shadow-sm transition-all text-sm font-medium">
-              <span className="material-symbols-outlined text-[20px]">add</span>
-              新增房屋
-            </button>
+            <div className="flex gap-3">
+              <Link href="/properties/map" className="inline-flex items-center justify-center gap-2 bg-background-light dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-text-main dark:text-white border border-border-light dark:border-border-dark px-4 py-2.5 rounded-lg shadow-sm transition-all text-sm font-medium">
+                <span className="material-symbols-outlined text-[20px]">map</span>
+                可视化看盘
+              </Link>
+              <button className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-lg shadow-sm transition-all text-sm font-medium">
+                <span className="material-symbols-outlined text-[20px]">add</span>
+                新增房屋
+              </button>
+            </div>
           </div>
 
           {/* Filters & Search Card */}

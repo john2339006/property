@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>财务统计看板 - Property Cloud</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#208af3",
+                "background-light": "#f5f7f8",
+                "background-dark": "#101922",
+              },
+              fontFamily: {
+                "display": ["Manrope", "Noto Sans SC", "sans-serif"],
+                "sans": ["Manrope", "Noto Sans SC", "sans-serif"],
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for modern feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light text-slate-800 antialiased h-screen flex overflow-hidden selection:bg-primary/20 selection:text-primary">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-100 hidden md:flex flex-col z-20 shadow-sm">
+<!-- Logo Area -->
+<div class="h-16 flex items-center px-6 border-b border-slate-50">
+<div class="flex items-center gap-3 text-slate-900">
+<div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined icon-filled">cloud</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">物业云</h1>
+</div>
+</div>
+<!-- Nav Items -->
+<nav class="flex-1 overflow-y-auto p-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">home</span>
+<span class="font-medium text-sm">首页</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">domain</span>
+<span class="font-medium text-sm">房产管理</span>
+</a>
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined icon-filled">currency_yen</span>
+<span class="font-bold text-sm">财务管理</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">credit_card</span>
+<span class="font-medium text-sm">收费管理</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">bar_chart</span>
+<span class="font-medium text-sm">报表中心</span>
+</a>
+<div class="my-2 border-t border-slate-100"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+<span class="font-medium text-sm">系统设置</span>
+</a>
+</nav>
+<!-- User Profile Condensed -->
+<div class="p-4 border-t border-slate-50">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-white shadow-sm" data-alt="Logged in user profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAxzrj3xtrGQ6uNsE_0HXNe9Ca5C7cCtvb8ifEVVHmqKRfjmhiiCBy-eHXp-Fr_uCs3C3UQYDE9fRZ9JBWA1zliucNcnwy-F9IGwkfgo3dUd32CFtXGh2DOHBVuxpQ4TN90eMnPqAeh2BKJG3VZU3Csp0jdUEed_LfHrwLU5Af9gQsc7meRp4SY5GhY8Qt2STAyDo_nUM3Ql_2HT_-AEbFjOklj5JfGGliljZ6WVNDBVxEMEV9MTJIzyQLZBNsuyG7PqyrWboZKJcc");'></div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-slate-900">管理员</span>
+<span class="text-xs text-slate-500">财务部</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- Header -->
+<header class="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 md:px-8 shrink-0 z-10">
+<!-- Breadcrumbs / Mobile Menu Toggle -->
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 text-slate-500 hover:text-slate-700">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<nav class="hidden sm:flex items-center text-sm font-medium text-slate-500">
+<span class="hover:text-slate-800 cursor-pointer">首页</span>
+<span class="material-symbols-outlined text-slate-300 mx-2 text-base">chevron_right</span>
+<span class="hover:text-slate-800 cursor-pointer">财务管理</span>
+<span class="material-symbols-outlined text-slate-300 mx-2 text-base">chevron_right</span>
+<span class="text-slate-900 font-bold">财务看板</span>
+</nav>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-6">
+<!-- Search -->
+<div class="hidden md:flex items-center bg-background-light rounded-lg px-3 py-2 w-64 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">search</span>
+<input class="bg-transparent border-none text-sm text-slate-700 placeholder:text-slate-400 focus:ring-0 w-full ml-2 p-0 h-auto leading-none" placeholder="搜索..." type="text"/>
+</div>
+<!-- Notifications -->
+<button class="relative p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+</div>
+</header>
+<!-- Dashboard Content Scrollable -->
+<div class="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-6 pb-10">
+<!-- Page Title & Filter -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h2 class="text-2xl font-bold text-slate-900 leading-tight">财务统计看板</h2>
+<p class="text-slate-500 text-sm mt-1">实时监控财务收支状况</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<select class="appearance-none bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-lg pl-4 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm min-w-[160px] cursor-pointer">
+<option>2023年年度</option>
+<option>2024年第一季度</option>
+<option>2024年3月</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-lg">calendar_month</span>
+</div>
+</div>
+<button class="flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white text-sm font-bold py-2.5 px-5 rounded-lg shadow-sm shadow-blue-200 transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>导出报表</span>
+</button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Total Receivable -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex flex-col">
+<span class="text-slate-500 text-sm font-medium">总应收金额</span>
+<h3 class="text-3xl font-extrabold text-slate-900 mt-1 tracking-tight">¥ 12,450,000<span class="text-lg text-slate-400 font-normal">.00</span></h3>
+</div>
+<div class="p-2 bg-blue-50 text-primary rounded-lg">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-xs font-medium text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>同比 +12.5%</span>
+</div>
+</div>
+<!-- Collected -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-2">
+<div class="flex flex-col">
+<span class="text-slate-500 text-sm font-medium">已收金额</span>
+<h3 class="text-2xl font-bold text-slate-900 mt-1">¥ 10,200,000</h3>
+</div>
+<div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+</div>
+<div class="mt-4">
+<div class="flex justify-between text-xs mb-1.5">
+<span class="text-slate-500">收缴率</span>
+<span class="font-bold text-emerald-600">82%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 rounded-full" style="width: 82%"></div>
+</div>
+</div>
+</div>
+<!-- Outstanding -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex flex-col">
+<span class="text-slate-500 text-sm font-medium">欠费金额</span>
+<h3 class="text-2xl font-bold text-red-600 mt-1">¥ 2,250,000</h3>
+</div>
+<div class="p-2 bg-red-50 text-red-500 rounded-lg">
+<span class="material-symbols-outlined">error</span>
+</div>
+</div>
+<div class="text-xs text-slate-500 mt-1">
+                            涉及 <span class="font-bold text-slate-800">142</span> 户业主
+                        </div>
+</div>
+<!-- Discounts -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex flex-col">
+<span class="text-slate-500 text-sm font-medium">优惠总额</span>
+<h3 class="text-2xl font-bold text-slate-900 mt-1">¥ 15,000</h3>
+</div>
+<div class="p-2 bg-amber-50 text-amber-500 rounded-lg">
+<span class="material-symbols-outlined">percent</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-xs text-slate-400">
+                            占总应收 <span class="text-slate-600 font-medium">0.12%</span>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Line Chart -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm lg:col-span-2 flex flex-col h-[400px]">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-lg font-bold text-slate-900">收费趋势 (近12个月)</h3>
+<div class="flex items-center gap-4 text-xs font-medium">
+<div class="flex items-center gap-2">
+<div class="size-2.5 rounded-full bg-slate-200"></div>
+<span class="text-slate-500">应收金额</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2.5 rounded-full bg-primary"></div>
+<span class="text-slate-800">实收金额</span>
+</div>
+</div>
+</div>
+<!-- Visual Chart Simulation -->
+<div class="flex-1 w-full relative">
+<!-- Y-axis Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between text-xs text-slate-400 pointer-events-none">
+<div class="border-b border-slate-100 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2">200w</span></div>
+<div class="border-b border-slate-100 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2">150w</span></div>
+<div class="border-b border-slate-100 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2">100w</span></div>
+<div class="border-b border-slate-100 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2">50w</span></div>
+<div class="border-b border-slate-100 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2">0</span></div>
+</div>
+<!-- SVG Chart -->
+<svg class="absolute inset-0 w-full h-full pl-8 pb-6" preserveaspectratio="none" viewbox="0 0 100 100">
+<!-- Dashed Line (Receivable) -->
+<polyline fill="none" points="0,40 9,42 18,38 27,35 36,36 45,30 54,28 63,25 72,22 81,18 90,15 100,12" stroke="#cbd5e1" stroke-dasharray="2 1" stroke-width="0.5" vector-effect="non-scaling-stroke"></polyline>
+<!-- Solid Line (Collected) -->
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#208af3" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#208af3" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Area -->
+<path d="M0,60 L9,55 L18,58 L27,50 L36,45 L45,40 L54,42 L63,38 L72,30 L81,25 L90,20 L100,18 V100 H0 Z" fill="url(#chartGradient)" stroke="none"></path>
+<!-- Stroke -->
+<polyline fill="none" points="0,60 9,55 18,58 27,50 36,45 45,40 54,42 63,38 72,30 81,25 90,20 100,18" stroke="#208af3" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>
+<!-- Tooltip Simulation -->
+<circle cx="72" cy="30" fill="white" r="3" stroke="#208af3" stroke-width="1.5" vector-effect="non-scaling-stroke"></circle>
+</svg>
+<!-- Tooltip Card -->
+<div class="absolute top-[20%] left-[68%] bg-white p-3 rounded shadow-lg border border-slate-100 z-10 text-xs w-32 pointer-events-none">
+<div class="font-bold text-slate-800 mb-1">2023-09</div>
+<div class="flex justify-between text-slate-500 mb-0.5"><span>应收:</span> <span>165w</span></div>
+<div class="flex justify-between text-primary font-medium"><span>已收:</span> <span>142w</span></div>
+</div>
+</div>
+<!-- X-axis Labels -->
+<div class="flex justify-between pl-8 text-xs text-slate-400 mt-2">
+<span>1月</span><span>2月</span><span>3月</span><span>4月</span><span>5月</span><span>6月</span><span>7月</span><span>8月</span><span>9月</span><span>10月</span><span>11月</span><span>12月</span>
+</div>
+</div>
+<!-- Pie Chart -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col h-[400px]">
+<h3 class="text-lg font-bold text-slate-900 mb-6">费用结构占比</h3>
+<div class="flex-1 flex flex-col items-center justify-center relative">
+<!-- CSS Pie Chart -->
+<div class="relative size-48 rounded-full" style="background: conic-gradient(#208af3 0% 45%, #3b82f6 45% 46%, #10b981 46% 75%, #10b981 75% 76%, #f59e0b 76% 92%, #f59e0b 92% 93%, #94a3b8 93% 100%);">
+<div class="absolute inset-0 m-auto size-32 bg-white rounded-full flex items-center justify-center flex-col">
+<span class="text-slate-400 text-xs">总收入</span>
+<span class="text-slate-900 font-bold text-lg">¥1020w</span>
+</div>
+</div>
+</div>
+<div class="mt-6 grid grid-cols-2 gap-4">
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-primary"></div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-500">物业费</span>
+<span class="text-sm font-bold text-slate-800">45%</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-emerald-500"></div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-500">停车费</span>
+<span class="text-sm font-bold text-slate-800">30%</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-amber-500"></div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-500">水电费</span>
+<span class="text-sm font-bold text-slate-800">17%</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-slate-400"></div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-500">其他</span>
+<span class="text-sm font-bold text-slate-800">8%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Tables -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Ranking List -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm lg:col-span-1 h-full">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-lg font-bold text-slate-900">楼栋收缴率排行</h3>
+<button class="text-primary text-sm font-medium hover:underline">查看全部</button>
+</div>
+<div class="flex flex-col gap-5">
+<!-- Item 1 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="font-bold text-slate-800">A栋写字楼</span>
+<span class="font-bold text-emerald-600">98%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 rounded-full" style="width: 98%"></div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="font-bold text-slate-800">B栋住宅</span>
+<span class="font-bold text-primary">92%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="font-bold text-slate-800">C栋商铺</span>
+<span class="font-bold text-primary">85%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full opacity-80" style="width: 85%"></div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="font-bold text-slate-800">D栋公寓</span>
+<span class="font-bold text-amber-500">74%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 rounded-full" style="width: 74%"></div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="font-bold text-slate-800">E栋仓库</span>
+<span class="font-bold text-red-500">62%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-red-500 rounded-full" style="width: 62%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Audit Table -->
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm lg:col-span-2 flex flex-col h-full">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-slate-900">最近费用调整</h3>
+<button class="text-primary text-sm font-medium hover:underline">审计日志</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-slate-100 text-xs text-slate-500 uppercase tracking-wider">
+<th class="py-3 px-2 font-medium">时间</th>
+<th class="py-3 px-2 font-medium">操作人</th>
+<th class="py-3 px-2 font-medium">调整类型</th>
+<th class="py-3 px-2 font-medium text-right">金额</th>
+<th class="py-3 px-2 font-medium">原因</th>
+</tr>
+</thead>
+<tbody class="text-sm text-slate-700">
+<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+<td class="py-3 px-2 whitespace-nowrap text-slate-500">2023-12-05 14:30</td>
+<td class="py-3 px-2">王小明</td>
+<td class="py-3 px-2"><span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-xs font-bold">减免</span></td>
+<td class="py-3 px-2 text-right font-medium text-red-600">- ¥50.00</td>
+<td class="py-3 px-2 text-slate-500">滞纳金减免</td>
+</tr>
+<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+<td class="py-3 px-2 whitespace-nowrap text-slate-500">2023-12-05 11:15</td>
+<td class="py-3 px-2">李财务</td>
+<td class="py-3 px-2"><span class="bg-amber-50 text-amber-600 px-2 py-0.5 rounded text-xs font-bold">调整</span></td>
+<td class="py-3 px-2 text-right font-medium text-slate-900">+ ¥120.00</td>
+<td class="py-3 px-2 text-slate-500">补录水电费</td>
+</tr>
+<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+<td class="py-3 px-2 whitespace-nowrap text-slate-500">2023-12-04 16:20</td>
+<td class="py-3 px-2">系统自动</td>
+<td class="py-3 px-2"><span class="bg-blue-50 text-primary px-2 py-0.5 rounded text-xs font-bold">生成</span></td>
+<td class="py-3 px-2 text-right font-medium text-slate-900">+ ¥5,200.00</td>
+<td class="py-3 px-2 text-slate-500">12月停车费</td>
+</tr>
+<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+<td class="py-3 px-2 whitespace-nowrap text-slate-500">2023-12-04 09:45</td>
+<td class="py-3 px-2">张主管</td>
+<td class="py-3 px-2"><span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-xs font-bold">优惠</span></td>
+<td class="py-3 px-2 text-right font-medium text-red-600">- ¥200.00</td>
+<td class="py-3 px-2 text-slate-500">预缴一年赠送</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="py-3 px-2 whitespace-nowrap text-slate-500">2023-12-03 15:10</td>
+<td class="py-3 px-2">王小明</td>
+<td class="py-3 px-2"><span class="bg-amber-50 text-amber-600 px-2 py-0.5 rounded text-xs font-bold">退款</span></td>
+<td class="py-3 px-2 text-right font-medium text-red-600">- ¥1,500.00</td>
+<td class="py-3 px-2 text-slate-500">押金退还</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

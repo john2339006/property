@@ -33,3 +33,27 @@ body {
     color: #ffffff;
   }
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #invoice-preview, #invoice-preview * {
+    visibility: visible;
+  }
+  #invoice-preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    background: white !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

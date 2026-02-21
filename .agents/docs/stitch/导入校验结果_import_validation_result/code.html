@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>导入校验结果 - Import Validation Result</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#208af3",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans SC", "sans-serif"],
+                        "body": ["Noto Sans SC", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+        }
+        /* Custom scrollbar for table */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col text-slate-900 dark:text-slate-100">
+<!-- Top Navigation / Breadcrumbs -->
+<div class="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-6 py-4">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">首页</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">系统设置</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">数据导入</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="font-medium text-slate-900 dark:text-white">校验结果</span>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<main class="flex-1 max-w-7xl mx-auto w-full px-6 py-8 flex flex-col gap-8">
+<!-- Stepper -->
+<div class="w-full">
+<div class="flex justify-between items-center mb-2">
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white">批量导入房产数据</h1>
+<span class="text-sm font-medium text-slate-500">步骤 3 / 4</span>
+</div>
+<div class="relative w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary w-3/4"></div>
+</div>
+<div class="flex justify-between mt-3 text-sm font-medium text-slate-500 dark:text-slate-400">
+<span class="text-primary">1. 上传文件</span>
+<span class="text-primary">2. 字段映射</span>
+<span class="text-primary font-bold">3. 数据预览与校验</span>
+<span>4. 完成导入</span>
+</div>
+</div>
+<!-- Summary Alert: Error State -->
+<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex gap-4 items-start">
+<div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-800 flex items-center justify-center shrink-0 text-red-600 dark:text-red-200">
+<span class="material-symbols-outlined text-2xl">error</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-red-800 dark:text-red-200 mb-1">校验失败：发现 5 条错误数据</h3>
+<p class="text-red-600 dark:text-red-300 text-sm">请直接在下方表格中修改错误数据，或者下载错误报告修正后重新上传。</p>
+</div>
+</div>
+<div class="flex gap-3 shrink-0">
+<button class="px-4 py-2 bg-white dark:bg-slate-800 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">download</span>
+                    导出错误清单
+                </button>
+<button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">upload_file</span>
+                    重新上传文件
+                </button>
+</div>
+</div>
+<!-- Data Grid Container -->
+<div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden">
+<!-- Filter Tabs -->
+<div class="border-b border-slate-200 dark:border-slate-700 px-6 pt-4 flex gap-8">
+<button class="pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium text-sm flex gap-2 items-center">
+                    全部数据
+                    <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs py-0.5 px-2 rounded-full">155</span>
+</button>
+<button class="pb-3 border-b-2 border-red-500 text-red-600 dark:text-red-400 font-bold text-sm flex gap-2 items-center">
+                    错误数据
+                    <span class="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs py-0.5 px-2 rounded-full">5</span>
+</button>
+<button class="pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium text-sm flex gap-2 items-center">
+                    成功数据
+                    <span class="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs py-0.5 px-2 rounded-full">150</span>
+</button>
+</div>
+<!-- Table Actions -->
+<div class="px-6 py-4 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+<div class="text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined align-middle text-lg mr-1">info</span>
+                    双击红色边框的单元格可直接进行编辑修正。
+                </div>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-lg">search</span>
+<input class="pl-9 pr-4 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-900 dark:text-slate-100 w-64 placeholder:text-slate-400" placeholder="搜索房号或业主..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Table -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+<th class="px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-20">状态</th>
+<th class="px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">房号</th>
+<th class="px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">面积 (㎡)</th>
+<th class="px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-40">业主姓名</th>
+<th class="px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-40">手机号</th>
+<th class="px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">错误详情</th>
+<th class="px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24 text-right">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800">
+<!-- Row 1: Error (Area Format) -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-red-500 text-xl" title="校验失败">warning</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">1-101</td>
+<td class="px-6 py-4">
+<div class="relative">
+<input class="w-full px-2 py-1 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded focus:ring-2 focus:ring-red-200 focus:border-red-500 outline-none transition-all" type="text" value="120 sqm"/>
+<span class="material-symbols-outlined absolute right-2 top-1.5 text-red-500 text-sm">edit</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">张三</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">13800138000</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300">
+                                    面积格式错误 (应为数字)
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Error (Duplicate ID) -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-red-500 text-xl" title="校验失败">warning</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">1-102</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">90</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">李四</td>
+<td class="px-6 py-4">
+<div class="relative">
+<input class="w-full px-2 py-1 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded focus:ring-2 focus:ring-red-200 focus:border-red-500 outline-none transition-all" type="text" value="13900139000"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300">
+                                    手机号已存在
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Error (Missing Field) -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-red-500 text-xl" title="校验失败">warning</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">2-201</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">88</td>
+<td class="px-6 py-4">
+<div class="relative">
+<input class="w-full px-2 py-1 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded focus:ring-2 focus:ring-red-200 focus:border-red-500 outline-none transition-all placeholder:text-red-300" placeholder="必填" type="text"/>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">13700137000</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300">
+                                    必填项缺失
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Success (Context) -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors opacity-60">
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-green-500 text-xl" title="校验通过">check_circle</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">2-202</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">130</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">赵六</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">13600136000</td>
+<td class="px-6 py-4">
+<span class="text-xs text-slate-400 italic">无错误</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Success (Context) -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors opacity-60">
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-green-500 text-xl" title="校验通过">check_circle</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">3-301</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">100</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">孙七</td>
+<td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">13500135000</td>
+<td class="px-6 py-4">
+<span class="text-xs text-slate-400 italic">无错误</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800">
+<div class="text-sm text-slate-500 dark:text-slate-400">
+                    显示第 1 到 5 条，共 5 条错误数据
+                </div>
+<div class="flex gap-2">
+<button class="px-3 py-1 border border-slate-200 dark:border-slate-600 rounded text-sm text-slate-500 disabled:opacity-50" disabled="">上一页</button>
+<button class="px-3 py-1 border border-slate-200 dark:border-slate-600 rounded text-sm text-slate-500 disabled:opacity-50" disabled="">下一页</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Footer Actions -->
+<div class="sticky bottom-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-4 shadow-lg z-10">
+<div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+<div class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">help</span>
+<span>校验规则说明: 房号必须唯一，面积需为数字，手机号必须为11位。</span>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-medium text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    取消导入
+                </button>
+<!-- Primary Action: Disabled State -->
+<button class="px-6 py-2.5 rounded-lg bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-sm cursor-not-allowed flex items-center gap-2" disabled="">
+                    确认导入 (需修复 5 个错误)
+                </button>
+</div>
+</div>
+</div>
+</body></html>

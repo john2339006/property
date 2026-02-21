@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>收费项目配置 - Billing Type Config</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#208af3",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ['Manrope', 'Noto Sans SC', 'sans-serif'],
+                        "body": ['Manrope', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+        }
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased overflow-hidden">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar (Modified from input) -->
+<div class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111418] h-full flex flex-col hidden md:flex">
+<div class="p-4 flex items-center gap-3 border-b border-slate-100 dark:border-slate-800">
+<div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-base font-bold leading-tight">Admin Panel</h1>
+<p class="text-slate-500 text-xs">Property Management</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-4 flex flex-col gap-1 px-3">
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-sm font-medium">工作台</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[20px]">apartment</span>
+<span class="text-sm font-medium">房产管理</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-sm font-medium">客户管理</span>
+</div>
+<!-- Active Item -->
+<div class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg cursor-pointer font-medium">
+<span class="material-symbols-outlined text-[20px] fill-current">attach_money</span>
+<span class="text-sm">费用配置</span>
+</div>
+<div class="pl-11 pr-3 py-2 text-sm text-primary font-medium cursor-pointer relative before:absolute before:left-7 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary">
+                    收费项目
+                </div>
+<div class="pl-11 pr-3 py-2 text-sm text-slate-500 hover:text-slate-900 cursor-pointer">
+                    账单模板
+                </div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors mt-auto">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-sm font-medium">系统设置</span>
+</div>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+<!-- Header -->
+<header class="h-16 bg-white dark:bg-[#111418] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 z-10">
+<div class="flex items-center gap-4">
+<!-- Mobile Toggle -->
+<button class="md:hidden text-slate-500">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">收费项目配置</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 placeholder:text-slate-400 w-64" placeholder="Search..." type="text"/>
+</div>
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="User profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPTADxrkTW4_j7leshKJC3CkInSQ7s8xfW_7Xl12zhpTVo-M1WRF52haCDweIVSRD7bjuPogBzss2t9brQYaDqcS5SBL3ohPG7VfAD5JLtl7FQ9Atif02ivptcGPXumLpnwhpNgEOPjzqg0DMquITeXxbrSujoX6ZSFo8F6MLH2YJxevphn9qNaOZYHOQtcOvz4hLH9fTH_U-ncBgJ2GNnKjEKHyiFAnQtKpRGPLtroXS02koGTZskp_FW3U28XNTOH_plFJorMLY');"></div>
+</div>
+</header>
+<!-- Scrollable Content -->
+<main class="flex-1 overflow-y-auto p-6 scroll-smooth">
+<div class="max-w-[1200px] mx-auto flex flex-col gap-6">
+<!-- Breadcrumbs & Actions -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex flex-col gap-1">
+<nav class="flex items-center text-sm text-slate-500">
+<a class="hover:text-primary transition-colors" href="#">首页</a>
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">费用配置</a>
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-200 font-medium">收费项目</span>
+</nav>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white">收费项目管理</h1>
+</div>
+<button class="bg-primary hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 text-sm font-semibold shadow-sm transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                            新增收费项目
+                        </button>
+</div>
+<!-- Layout: Left List / Right Detail -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full items-start">
+<!-- Left: List of Billing Types -->
+<div class="lg:col-span-4 flex flex-col gap-4">
+<!-- Search in List -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">filter_list</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[#1e2329] border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary" placeholder="筛选收费项目..." type="text"/>
+</div>
+<!-- List Items -->
+<div class="flex flex-col gap-3">
+<!-- Item 1: Active & Selected -->
+<div class="bg-white dark:bg-[#1e2329] p-4 rounded-xl border-2 border-primary shadow-sm cursor-pointer relative overflow-hidden group">
+<div class="absolute top-0 right-0 bg-primary text-white text-[10px] px-2 py-0.5 rounded-bl-lg font-bold uppercase tracking-wider">Selected</div>
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<div class="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg">
+<span class="material-symbols-outlined text-[20px]">apartment</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white leading-tight">物业管理费</h3>
+<span class="text-xs text-slate-500">按建筑面积计费</span>
+</div>
+</div>
+<span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">生效中</span>
+</div>
+<div class="flex items-baseline gap-1 mt-3">
+<span class="text-2xl font-bold text-slate-900 dark:text-white">2.80</span>
+<span class="text-xs text-slate-500 font-medium">元/m²/月</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-white dark:bg-[#1e2329] p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:border-primary/50 cursor-pointer transition-colors group">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<div class="p-2 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-lg">
+<span class="material-symbols-outlined text-[20px]">local_parking</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white leading-tight">地下停车费</h3>
+<span class="text-xs text-slate-500">固定月租</span>
+</div>
+</div>
+<span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">生效中</span>
+</div>
+<div class="flex items-baseline gap-1 mt-3">
+<span class="text-2xl font-bold text-slate-900 dark:text-white">400.00</span>
+<span class="text-xs text-slate-500 font-medium">元/月/位</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-white dark:bg-[#1e2329] p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:border-primary/50 cursor-pointer transition-colors group">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<div class="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg">
+<span class="material-symbols-outlined text-[20px]">water_drop</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white leading-tight">商业用水费</h3>
+<span class="text-xs text-slate-500">阶梯计费</span>
+</div>
+</div>
+<span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">草稿</span>
+</div>
+<div class="flex items-baseline gap-1 mt-3">
+<span class="text-sm text-slate-500 font-medium">三阶梯配置</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Config Detail -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Main Config Card -->
+<div class="bg-white dark:bg-[#1e2329] rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+<div class="border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between bg-slate-50/50 dark:bg-white/5">
+<h3 class="font-bold text-lg text-slate-900 dark:text-white">配置详情: 物业管理费</h3>
+<button class="text-primary hover:text-blue-700 text-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                                        版本管理
+                                    </button>
+</div>
+<div class="p-6 flex flex-col gap-8">
+<!-- Basic Info -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">项目名称</label>
+<input class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-primary focus:border-primary font-medium" type="text" value="物业管理费"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">生效日期 (Effective Date)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">calendar_today</span>
+<input class="w-full pl-10 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-primary focus:border-primary font-medium" type="date" value="2023-10-01"/>
+</div>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-px bg-slate-100 dark:bg-slate-700"></div>
+<!-- Model Selection Tabs -->
+<div class="flex flex-col gap-4">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">计费模式模型 (Billing Model)</label>
+<div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-fit">
+<button class="px-4 py-1.5 rounded-md text-sm font-bold bg-white dark:bg-[#1e2329] text-primary shadow-sm transition-all border border-slate-200 dark:border-slate-600">
+                                                按面积计费 (Area)
+                                            </button>
+<button class="px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-all">
+                                                阶梯计费 (Tiered)
+                                            </button>
+<button class="px-4 py-1.5 rounded-md text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-all">
+                                                固定金额 (Fixed)
+                                            </button>
+</div>
+</div>
+<!-- Area Model Content (Active) -->
+<div class="bg-primary/5 border border-primary/20 rounded-xl p-6">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">square_foot</span>
+<h4 class="font-bold text-slate-900 dark:text-white">按建筑面积计算</h4>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">单价 (Unit Price)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">currency_yuan</span>
+<input class="w-full pl-9 pr-16 py-2.5 bg-white dark:bg-[#111418] border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white font-bold focus:ring-primary focus:border-primary" type="number" value="2.80"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">元/m²/月</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">用途类型 (Usage Type)</label>
+<select class="w-full py-2.5 bg-white dark:bg-[#111418] border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-primary focus:border-primary text-sm">
+<option>商业办公 (Business)</option>
+<option>住宅 (Residential)</option>
+<option>商铺 (Retail)</option>
+</select>
+</div>
+</div>
+<p class="text-xs text-slate-500 mt-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                                            公式: 费用 = 建筑面积 × 单价
+                                        </p>
+</div>
+<!-- Tiered Model Content (Inactive/Visual representation of inactive state or secondary example) -->
+<div class="flex flex-col gap-4 opacity-60 hover:opacity-100 transition-opacity">
+<div class="flex items-center justify-between">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">阶梯计费预览 (Tiered Model Preview)</label>
+<span class="text-xs text-slate-400 italic">Example for Water Usage</span>
+</div>
+<div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+<table class="w-full text-sm text-left">
+<thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 border-b border-slate-200 dark:border-slate-700">
+<tr>
+<th class="px-4 py-3 font-medium w-24">层级</th>
+<th class="px-4 py-3 font-medium">起始用量</th>
+<th class="px-4 py-3 font-medium">结束用量</th>
+<th class="px-4 py-3 font-medium text-right">单价 (元/m³)</th>
+<th class="px-4 py-3 w-10"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-[#1e2329]">
+<tr>
+<td class="px-4 py-3 font-medium text-slate-900 dark:text-white">Level 1</td>
+<td class="px-4 py-3 text-slate-600 dark:text-slate-300">0</td>
+<td class="px-4 py-3 text-slate-600 dark:text-slate-300">100</td>
+<td class="px-4 py-3 text-right font-mono font-medium text-slate-900 dark:text-white">¥ 2.00</td>
+<td class="px-4 py-3 text-center">
+<button class="text-slate-400 hover:text-red-500"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</td>
+</tr>
+<tr>
+<td class="px-4 py-3 font-medium text-slate-900 dark:text-white">Level 2</td>
+<td class="px-4 py-3 text-slate-600 dark:text-slate-300">100</td>
+<td class="px-4 py-3 text-slate-600 dark:text-slate-300">200</td>
+<td class="px-4 py-3 text-right font-mono font-medium text-slate-900 dark:text-white">¥ 2.50</td>
+<td class="px-4 py-3 text-center">
+<button class="text-slate-400 hover:text-red-500"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</td>
+</tr>
+<!-- Add New Row Stub -->
+<tr class="bg-slate-50/50 dark:bg-slate-800/50 border-t-2 border-dashed border-slate-200 dark:border-slate-700">
+<td class="px-4 py-2 text-center" colspan="5">
+<button class="text-primary text-xs font-bold hover:underline flex items-center justify-center gap-1 w-full h-full py-1">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+                                                                添加阶梯 (Add Level)
+                                                            </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="bg-slate-50 dark:bg-[#1a2026] px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+<button class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-white dark:hover:bg-[#1e2329] transition-colors">
+                                        取消 (Cancel)
+                                    </button>
+<button class="px-6 py-2 rounded-lg bg-primary hover:bg-blue-600 text-white text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                                        保存配置 (Save Config)
+                                    </button>
+</div>
+</div>
+<!-- Additional Metadata Card -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-[#1e2329] rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+<div class="flex items-center gap-3 mb-2">
+<div class="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg text-purple-600 dark:text-purple-400">
+<span class="material-symbols-outlined text-[20px]">calculate</span>
+</div>
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">关联公式</h4>
+</div>
+<p class="text-sm text-slate-500 leading-relaxed">
+                                        此收费项目将应用 <span class="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-700">BASE_AREA_FORMULA_V2</span> 计算逻辑。
+                                    </p>
+</div>
+<div class="bg-white dark:bg-[#1e2329] rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+<div class="flex items-center gap-3 mb-2">
+<div class="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-lg text-yellow-600 dark:text-yellow-400">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">配置提醒</h4>
+</div>
+<p class="text-sm text-slate-500 leading-relaxed">
+                                        修改生效日期后，系统将在次月1日自动重新生成未结账单。
+                                    </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

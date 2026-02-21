@@ -6,13 +6,16 @@ import Image from "next/image";
 import clsx from "clsx";
 
 const menuItems = [
-  { name: "工作台", href: "/", icon: "dashboard" },
+  { name: "管理中心", href: "/", icon: "dashboard" },
+  { name: "操作台", href: "/operator", icon: "support_agent" },
   { name: "房产管理", href: "/properties", icon: "domain" },
-  { name: "业主管理", href: "/owners", icon: "people" }, // Link to a list if exists, or just use ID for now
+  { name: "业主管理", href: "/owners", icon: "people" },
+  { name: "数据导入", href: "/import-validation", icon: "cloud_upload" },
   { name: "费用配置", href: "/billing/config", icon: "payments" },
   { name: "账单与发票", href: "/billing", icon: "receipt_long" },
-  { name: "统计报表", href: "/reports", icon: "bar_chart" },
-  { name: "系统设置", href: "/settings", icon: "settings" },
+  { name: "公司档案", href: "/company", icon: "business" },
+  { name: "用户权限", href: "/users", icon: "admin_panel_settings" },
+  { name: "审计日志", href: "/audit-logs", icon: "security" },
 ];
 
 export default function Sidebar() {

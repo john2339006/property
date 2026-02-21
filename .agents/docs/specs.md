@@ -221,21 +221,23 @@ Out of scope for this phase:
 
 ## 6. Search & Query Requirements
 
-### 6.1 Searchable Entities
-- Owners
-- Houses
-- Invoices
-- Billing types
-- Payment history
-- Current bills
+### 6.1 Searchable Entities & Fields
+- **Users**: Search by name, email
+- **Owners**: Search by name, phone number, ID number
+- **Houses**: Search by door/house number
+- **Bills & Invoices**: Search by house number, owner name
+- **Audit Logs**: Search by operator (name or ID)
+- **Billing types**
+- **Payment history**
 
 ### 6.2 Filters
-- Paid / unpaid invoices
-- Billing period
-- House status
+- **Owners**: Status (active, lost)
+- **Houses**: Building, Unit, Status (sold, not sold, inactive)
+- **Bills & Invoices**: Billing period, Billing type, Status (draft/pending, issued, paid, voided)
+- **Audit Logs**: Time range, Operator, Module, Action Type
 
 ### 6.3 Pagination
-- Page size options: 50, 100
+- Page size options: 20, 50, 100, 200
 
 ## 7. Reporting & Analytics
 

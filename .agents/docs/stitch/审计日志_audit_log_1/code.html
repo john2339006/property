@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>审计日志 Audit Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#208af3",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for table if needed */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col overflow-hidden">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111418] px-10 py-3 shrink-0">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">security</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Admin Portal</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex gap-2">
+<button class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+</button>
+<button class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700" data-alt="User profile avatar of a smiling man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMGPZh8AAUy_RSRf84ZgrbREqsG4cx3fTUpnuc2gZW9NbkuTad5YjRSe3qauSoV0QAbawKbFIP4W1fuiOmhcwZlCiFvSBnppAhcSb9iULZAi9BMTCphE7v5n_hdkYwHeMrUsQLtbqqPbDO5eqZzw0lqAz6mUctibnEZAYWaD4op9u-BTPlU2gNaDPEkMSSV_EG-jbO4yoPhdc1Lnioh4h0h9IVFSFVF0BL6rOZM7BBeZ4FRx7C3AOkFoLlZdBagoiqj1G1tvmE1i8");'></div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden">
+<div class="px-6 py-5 w-full max-w-[1600px] mx-auto flex flex-col h-full">
+<!-- Breadcrumbs & Header -->
+<div class="flex flex-col gap-4 mb-6 shrink-0">
+<div class="flex flex-wrap gap-2 text-sm">
+<a class="text-slate-500 hover:text-primary transition-colors font-medium leading-normal" href="#">首页</a>
+<span class="text-slate-400 font-medium leading-normal">/</span>
+<a class="text-slate-500 hover:text-primary transition-colors font-medium leading-normal" href="#">系统设置</a>
+<span class="text-slate-400 font-medium leading-normal">/</span>
+<span class="text-slate-900 dark:text-white font-semibold leading-normal">审计日志</span>
+</div>
+<div class="flex justify-between items-end">
+<div class="flex flex-col gap-1">
+<h1 class="text-slate-900 dark:text-white text-3xl font-extrabold tracking-tight">审计日志 Audit Log</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm">全平台数据变更追踪系统，保障数据安全与合规透明 System-wide data mutation tracking.</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center gap-2 h-9 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                导出 CSV
+                            </button>
+</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mb-4 shadow-sm shrink-0">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">操作时间 Time Range</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">calendar_today</span>
+<input class="w-full pl-10 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-slate-400 font-mono" placeholder="2023-10-01 - 2023-10-27" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">操作人 Operator</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">search</span>
+<input class="w-full pl-10 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-slate-400" placeholder="请输入姓名或ID" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">模块 Module</label>
+<div class="relative">
+<select class="w-full pl-3 pr-10 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer">
+<option value="">全部模块 All Modules</option>
+<option value="billing">账单管理 Billing</option>
+<option value="property">房产资源 Property</option>
+<option value="owner">业主档案 Owner</option>
+<option value="system">系统配置 System</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-slate-500 pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">操作类型 Type</label>
+<div class="relative">
+<select class="w-full pl-3 pr-10 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer">
+<option value="">全部类型 All Types</option>
+<option value="create">新增 Create</option>
+<option value="update">修改 Update</option>
+<option value="delete">删除 Delete</option>
+<option value="price">调价 Adjust Price</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-slate-500 pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 h-[38px] bg-primary hover:bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-sm shadow-blue-500/30 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                                筛选 Search
+                            </button>
+<button class="w-[38px] h-[38px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 rounded-lg flex items-center justify-center transition-colors" title="重置 Reset">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 overflow-hidden min-h-[400px]">
+<div class="overflow-auto custom-scrollbar flex-1">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50 dark:bg-slate-900/50 sticky top-0 z-10">
+<tr>
+<th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">时间 Timestamp</th>
+<th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">操作人 Operator</th>
+<th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">模块 Module</th>
+<th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">类型 Type</th>
+<th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 w-full">操作内容 Details</th>
+<th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">IP地址</th>
+<th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 text-right whitespace-nowrap">变更 Diff</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-700/50 text-sm">
+<!-- Row 1 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-27 14:30:05</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">张</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">张三</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">财务</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">账单管理</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/50">
+<span class="size-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                            修改
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        修改了账单 <span class="font-mono text-primary bg-primary/10 px-1 rounded cursor-pointer hover:underline">H-20231001</span> 的金额
+                                    </td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">192.168.1.45</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors bg-slate-50/50 dark:bg-slate-800/50">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-27 14:28:12</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">李</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">李四</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">管理员</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">业主档案</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+<span class="size-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                            新增
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        录入新业主 <span class="font-mono text-slate-900 dark:text-white font-medium">王五 (10-201)</span>
+</td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">192.168.1.45</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-27 13:15:44</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">张</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">张三</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">财务</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">费用配置</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/50">
+<span class="size-1.5 rounded-full bg-rose-500 mr-1.5"></span>
+                                            删除
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        删除了过期收费标准 <span class="font-mono text-slate-900 dark:text-white font-medium">2021-物业费</span>
+</td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">192.168.1.45</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors bg-slate-50/50 dark:bg-slate-800/50">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-27 11:05:30</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">Sys</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">系统自动</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">Bot</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">账单管理</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200/50">
+<span class="size-1.5 rounded-full bg-indigo-500 mr-1.5"></span>
+                                            调价
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        批量生成 <span class="font-bold text-slate-800 dark:text-slate-100">10月账单</span>，共计 204 条记录
+                                    </td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">127.0.0.1</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-26 17:50:22</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">赵</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">赵六</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">客服</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">房屋资源</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/50">
+<span class="size-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                            修改
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        更新房间 <span class="font-mono text-primary bg-primary/10 px-1 rounded cursor-pointer hover:underline">A-1205</span> 的入住状态为 "已入住"
+                                    </td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">192.168.1.102</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors bg-slate-50/50 dark:bg-slate-800/50">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-26 16:20:10</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">张</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">张三</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">财务</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">账单管理</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+<span class="size-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                            新增
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        手动创建临时费用 <span class="font-mono text-primary bg-primary/10 px-1 rounded cursor-pointer hover:underline">T-20231026</span> (维修费)
+                                    </td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">192.168.1.45</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+<!-- Row 7 -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-26 14:00:00</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">李</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">李四</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">管理员</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">系统配置</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/50">
+<span class="size-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                            修改
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        更改全局参数：<span class="font-mono text-slate-900 dark:text-white font-medium">LATE_FEE_RATE</span> 从 0.5% 至 0.6%
+                                    </td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">192.168.1.50</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+<!-- Row 8 (Placeholder to show filling space) -->
+<tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors bg-slate-50/50 dark:bg-slate-800/50">
+<td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600 dark:text-slate-300">2023-10-26 13:45:11</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">赵</div>
+<span class="font-medium text-slate-900 dark:text-slate-100">赵六</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">客服</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300">业主档案</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/50">
+<span class="size-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                            修改
+                                        </span>
+</td>
+<td class="py-3 px-4 text-slate-700 dark:text-slate-200">
+                                        更新业主 <span class="font-mono text-slate-900 dark:text-white font-medium">陈七</span> 的联系电话
+                                    </td>
+<td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-500">192.168.1.102</td>
+<td class="py-3 px-4 whitespace-nowrap text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-700 px-4 py-3 bg-white dark:bg-slate-800 shrink-0">
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500 dark:text-slate-400">显示第</span>
+<select class="form-select py-1 pl-2 pr-8 text-sm border-slate-200 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-900 focus:border-primary focus:ring-0">
+<option>100</option>
+<option>50</option>
+<option>20</option>
+</select>
+<span class="text-sm text-slate-500 dark:text-slate-400">条 / 页，共 5032 条记录</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50">
+<span class="material-symbols-outlined text-[20px]">first_page</span>
+</button>
+<button class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<div class="flex items-center gap-1 mx-2">
+<button class="size-8 flex items-center justify-center rounded text-sm font-medium bg-primary text-white shadow-sm">1</button>
+<button class="size-8 flex items-center justify-center rounded text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">2</button>
+<button class="size-8 flex items-center justify-center rounded text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">3</button>
+<span class="text-slate-400 px-1">...</span>
+<button class="size-8 flex items-center justify-center rounded text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">51</button>
+</div>
+<button class="p-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+<button class="p-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-[20px]">last_page</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Example Diff Modal (Visually positioned absolute for demonstration) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-4">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px]"></div>
+<!-- Modal Card -->
+<div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-4xl max-h-[80vh] flex flex-col pointer-events-auto overflow-hidden">
+<div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-amber-50 rounded-lg text-amber-600">
+<span class="material-symbols-outlined">edit_document</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">变更详情 Change Details</h3>
+<p class="text-xs text-slate-500">Log ID: #99283120 • 2023-10-27 14:30:05</p>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50">
+<div class="grid grid-cols-2 gap-0 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden text-sm font-mono">
+<!-- Header -->
+<div class="bg-red-50/50 dark:bg-red-900/20 p-3 border-b border-r border-slate-200 dark:border-slate-700 text-red-700 dark:text-red-400 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">remove_circle</span> 原始值 Old Value
+                    </div>
+<div class="bg-emerald-50/50 dark:bg-emerald-900/20 p-3 border-b border-slate-200 dark:border-slate-700 text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">add_circle</span> 新值 New Value
+                    </div>
+<!-- Content Row 1: Amount Change -->
+<div class="p-4 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 border-b border-slate-100 dark:border-slate-800">
+<div class="text-slate-500 text-xs mb-1">amount (金额)</div>
+<div class="bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200 inline-block px-1 rounded">2400.00</div>
+</div>
+<div class="p-4 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+<div class="text-slate-500 text-xs mb-1">amount (金额)</div>
+<div class="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 inline-block px-1 rounded">2250.00</div>
+</div>
+<!-- Content Row 2: Status (Unchanged) -->
+<div class="p-4 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 opacity-60">
+<div class="text-slate-500 text-xs mb-1">status (状态)</div>
+<div class="text-slate-600 dark:text-slate-400">UNPAID</div>
+</div>
+<div class="p-4 bg-slate-50 dark:bg-slate-900 opacity-60">
+<div class="text-slate-500 text-xs mb-1">status (状态)</div>
+<div class="text-slate-600 dark:text-slate-400">UNPAID</div>
+</div>
+<!-- Content Row 3: Remark Added -->
+<div class="p-4 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700">
+<div class="text-slate-500 text-xs mb-1">remark (备注)</div>
+<div class="text-slate-400 italic">null</div>
+</div>
+<div class="p-4 bg-white dark:bg-slate-800">
+<div class="text-slate-500 text-xs mb-1">remark (备注)</div>
+<div class="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 inline-block px-1 rounded">经协商减免物业费滞纳金</div>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-end gap-3">
+<button class="px-4 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium text-sm transition-colors">关闭 Close</button>
+</div>
+</div>
+</div>
+</body></html>
