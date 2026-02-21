@@ -6,84 +6,132 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  PLATFORM_ADMIN
+  COMPANY_ADMIN
+  FINANCE
+  OPERATOR
+  READ_ONLY
+}
+
+enum BillingPeriod {
+  MONTHLY
+  ANNUAL
+}
+
+enum EntityType {
+  INDIVIDUAL
+  ORGANIZATION
+}
+
+enum HouseStatus {
+  ACTIVE
+  SOLD_NOT_ACTIVE
+  NOT_SOLD
+}
+
+enum FeeModel {
+  AREA
+  TIERED
+}
+
+enum UsageType {
+  PERSONAL
+  BUSINESS
+  PUBLIC
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+  VOIDED
+}
 
 model ManagementCompany {
-  id                    String   @id @default(uuid())
-  legal_name            String
+  id                      String        @id @default(uuid())
+  legal_name              String
   registration_license_id String
-  contact_information   String
-  billing_information   String
-  default_billing_period String // monthly | annual
-  currency              String
-  created_at            DateTime @default(now())
-  updated_at            DateTime @updatedAt
+  contact_information     String
+  billing_information     String
+  default_billing_period  BillingPeriod
+  currency                String
+  created_at              DateTime      @default(now())
+  updated_at              DateTime      @updatedAt
 
-  users                 User[]
-  houses                House[]
-  billing_types         BillingType[]
-  discounts             Discount[]
-  owners                Owner[]
+  users         User[]
+  houses        House[]
+  billing_types BillingType[]
+  discounts     Discount[]
+  owners        Owner[]
 }
 
 model User {
-  id          String   @id @default(uuid())
-  username    String   @unique
-  password    String
-  email       String   @unique
-  role        String   // platform_admin, company_admin, finance, operator, read_only
-  company_id  String
-  company     ManagementCompany @relation(fields: [company_id], references: [id])
-  audit_logs  AuditLog[]
+  id         String            @id @default(uuid())
+  username   String            @unique
+  password   String
+  email      String            @unique
+  role       UserRole
+  company_id String
+  company    ManagementCompany @relation(fields: [company_id], references: [id])
+  audit_logs AuditLog[]
+
+  @@index([email])
+  @@index([username])
 }
 
 model Owner {
-  id                String   @id @default(uuid())
-  company_id        String
-  company           ManagementCompany @relation(fields: [company_id], references: [id])
-  entity_type       String   // individual | organization
+  id                 String            @id @default(uuid())
+  company_id         String
+  company            ManagementCompany @relation(fields: [company_id], references: [id])
+  entity_type        EntityType
   current_version_id String? // Optional to avoid circular dep initially, or just rely on is_latest
 
-  versions          OwnerVersion[]
-  house_ownerships  Ownership[]
+  versions         OwnerVersion[]
+  house_ownerships Ownership[]
 }
 
 model OwnerVersion {
-  id                      String   @id @default(uuid())
-  owner_id                String
-  owner                   Owner    @relation(fields: [owner_id], references: [id])
-  full_legal_name         String
-  id_number               String
-  tax_id                  String?
-  invoicing_name          String
-  phone                   String
-  email                   String
-  mailing_address         String
+  id                       String    @id @default(uuid())
+  owner_id                 String
+  owner                    Owner     @relation(fields: [owner_id], references: [id])
+  full_legal_name          String
+  id_number                String
+  tax_id                   String?
+  invoicing_name           String
+  phone                    String
+  email                    String
+  mailing_address          String
   preferred_contact_method String
-  effective_from          DateTime
-  effective_to            DateTime?
-  is_latest               Boolean  @default(false)
+  effective_from           DateTime
+  effective_to             DateTime?
+  is_latest                Boolean   @default(false)
+
+  @@index([full_legal_name, phone, id_number])
 }
 
 model House {
-  id                    String   @id @default(uuid())
+  id                    String            @id @default(uuid())
   company_id            String
   company               ManagementCompany @relation(fields: [company_id], references: [id])
-  status                String   // active | sold_not_active | not_sold
+  status                HouseStatus
   management_start_date DateTime
   management_end_date   DateTime?
   current_version_id    String?
 
-  versions              HouseVersion[]
-  ownerships            Ownership[]
-  bills                 Bill[]
-  invoices              Invoice[]
-  discounts             Discount[]
+  versions   HouseVersion[]
+  ownerships Ownership[]
+  bills      Bill[]
+  invoices   Invoice[]
+  discounts  Discount[]
+
+  @@index([status])
 }
 
 model HouseVersion {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   house_id       String
-  house          House    @relation(fields: [house_id], references: [id])
+  house          House     @relation(fields: [house_id], references: [id])
   building_no    String
   unit_no        String
   level_no       String
@@ -91,58 +139,62 @@ model HouseVersion {
   area_sqm       Float
   effective_from DateTime
   effective_to   DateTime?
-  is_latest      Boolean  @default(false)
+  is_latest      Boolean   @default(false)
+
+  @@index([building_no, unit_no, door_no])
 }
 
 model Ownership {
-  id        String @id @default(uuid())
-  house_id  String
-  house     House  @relation(fields: [house_id], references: [id])
-  owner_id  String
-  owner     Owner  @relation(fields: [owner_id], references: [id])
+  id       String @id @default(uuid())
+  house_id String
+  house    House  @relation(fields: [house_id], references: [id])
+  owner_id String
+  owner    Owner  @relation(fields: [owner_id], references: [id])
 }
 
 model BillingType {
-  id                 String   @id @default(uuid())
+  id                 String            @id @default(uuid())
   company_id         String
   company            ManagementCompany @relation(fields: [company_id], references: [id])
   name               String
   current_version_id String?
 
-  versions           BillingTypeVersion[]
+  versions BillingTypeVersion[]
 }
 
 model BillingTypeVersion {
-  id              String   @id @default(uuid())
+  id              String      @id @default(uuid())
   billing_type_id String
   billing_type    BillingType @relation(fields: [billing_type_id], references: [id])
-  fee_model       String   // AREA | TIERED
+  fee_model       FeeModel
   price_per_sqm   Float?
-  usage_type      String   // personal | business | public
+  usage_type      UsageType
   effective_from  DateTime
   effective_to    DateTime?
-  is_latest       Boolean  @default(false)
+  is_latest       Boolean     @default(false)
 }
 
 model Discount {
-  id         String   @id @default(uuid())
+  id         String            @id @default(uuid())
   company_id String
   company    ManagementCompany @relation(fields: [company_id], references: [id])
   house_id   String
-  house      House    @relation(fields: [house_id], references: [id])
+  house      House             @relation(fields: [house_id], references: [id])
   percentage Float
   one_time   Boolean
-  created_at DateTime @default(now())
+  created_at DateTime          @default(now())
 }
 
 model Bill {
-  id                 String   @id @default(uuid())
+  id                 String  @id @default(uuid())
   house_id           String
-  house              House    @relation(fields: [house_id], references: [id])
+  house              House   @relation(fields: [house_id], references: [id])
   billing_period     String
   current_version_id String?
 
-  versions           BillVersion[]
+  versions BillVersion[]
+
+  @@index([billing_period, house_id])
 }
 
 model BillVersion {
@@ -157,26 +209,28 @@ model BillVersion {
   reason            String?
   is_latest         Boolean  @default(false)
 
-  invoices          Invoice[]
+  invoices Invoice[]
 }
 
 model Invoice {
-  id              String   @id @default(uuid())
+  id              String        @id @default(uuid())
   bill_version_id String
-  bill_version    BillVersion @relation(fields: [bill_version_id], references: [id])
+  bill_version    BillVersion   @relation(fields: [bill_version_id], references: [id])
   house_id        String
-  house           House    @relation(fields: [house_id], references: [id])
+  house           House         @relation(fields: [house_id], references: [id])
   billing_period  String
-  status          String   // draft | issued | paid | voided
-  created_at      DateTime @default(now())
+  status          InvoiceStatus
+  created_at      DateTime      @default(now())
 
-  line_items      InvoiceLineItem[]
+  line_items InvoiceLineItem[]
+
+  @@index([status, billing_period])
 }
 
 model InvoiceLineItem {
-  id               String   @id @default(uuid())
+  id               String  @id @default(uuid())
   invoice_id       String
-  invoice          Invoice  @relation(fields: [invoice_id], references: [id])
+  invoice          Invoice @relation(fields: [invoice_id], references: [id])
   house_identifier String
   owner_name       String
   amount           Float
@@ -191,4 +245,6 @@ model AuditLog {
   entity_id   String
   details     String
   created_at  DateTime @default(now())
+
+  @@index([user_id, created_at])
 }
