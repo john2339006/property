@@ -4,8 +4,8 @@ This document outlines the step-by-step implementation plan for the Property Man
 
 **Legend:**
 - `[ ]` To Do
-- `[/]` In Progress
-- `[x]` Done
+- `[ ]` In Progress
+- `[ ]` Done
 - **ID**: Unique identifier for the task.
 - **Deps**: Dependencies that must be completed before this task.
 
@@ -15,7 +15,7 @@ This document outlines the step-by-step implementation plan for the Property Man
 
 Foundational setup for the Next.js application, DDD structure, and database connectivity.
 
-- [x] **1.1** Project Scaffolding <!-- id: 1.1 -->
+- [ ] **1.1** Project Scaffolding <!-- id: 1.1 -->
     - [ ] Initialize Next.js 15+ project with TypeScript.
     - [ ] Configure `tsconfig.json` paths for DDD layers (`@domain`, `@application`, `@infrastructure`, `@presentation`).
     - [ ] Setup ESLint and Prettier.
