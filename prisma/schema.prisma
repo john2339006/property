@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ManagementCompany {
+  id                    String   @id @default(uuid())
+  legal_name            String
+  registration_license_id String
+  contact_information   String
+  billing_information   String
+  default_billing_period String // monthly | annual
+  currency              String
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  users                 User[]
+  houses                House[]
+  billing_types         BillingType[]
+  discounts             Discount[]
+  owners                Owner[]
+}
+
+model User {
+  id          String   @id @default(uuid())
+  username    String   @unique
+  password    String
+  email       String   @unique
+  role        String   // platform_admin, company_admin, finance, operator, read_only
+  company_id  String
+  company     ManagementCompany @relation(fields: [company_id], references: [id])
+  audit_logs  AuditLog[]
+}
+
+model Owner {
+  id                String   @id @default(uuid())
+  company_id        String
+  company           ManagementCompany @relation(fields: [company_id], references: [id])
+  entity_type       String   // individual | organization
+  current_version_id String? // Optional to avoid circular dep initially, or just rely on is_latest
+
+  versions          OwnerVersion[]
+  house_ownerships  Ownership[]
+}
+
+model OwnerVersion {
+  id                      String   @id @default(uuid())
+  owner_id                String
+  owner                   Owner    @relation(fields: [owner_id], references: [id])
+  full_legal_name         String
+  id_number               String
+  tax_id                  String?
+  invoicing_name          String
+  phone                   String
+  email                   String
+  mailing_address         String
+  preferred_contact_method String
+  effective_from          DateTime
+  effective_to            DateTime?
+  is_latest               Boolean  @default(false)
+}
+
+model House {
+  id                    String   @id @default(uuid())
+  company_id            String
+  company               ManagementCompany @relation(fields: [company_id], references: [id])
+  status                String   // active | sold_not_active | not_sold
+  management_start_date DateTime
+  management_end_date   DateTime?
+  current_version_id    String?
+
+  versions              HouseVersion[]
+  ownerships            Ownership[]
+  bills                 Bill[]
+  invoices              Invoice[]
+  discounts             Discount[]
+}
+
+model HouseVersion {
+  id             String   @id @default(uuid())
+  house_id       String
+  house          House    @relation(fields: [house_id], references: [id])
+  building_no    String
+  unit_no        String
+  level_no       String
+  door_no        String
+  area_sqm       Float
+  effective_from DateTime
+  effective_to   DateTime?
+  is_latest      Boolean  @default(false)
+}
+
+model Ownership {
+  id        String @id @default(uuid())
+  house_id  String
+  house     House  @relation(fields: [house_id], references: [id])
+  owner_id  String
+  owner     Owner  @relation(fields: [owner_id], references: [id])
+}
+
+model BillingType {
+  id                 String   @id @default(uuid())
+  company_id         String
+  company            ManagementCompany @relation(fields: [company_id], references: [id])
+  name               String
+  current_version_id String?
+
+  versions           BillingTypeVersion[]
+}
+
+model BillingTypeVersion {
+  id              String   @id @default(uuid())
+  billing_type_id String
+  billing_type    BillingType @relation(fields: [billing_type_id], references: [id])
+  fee_model       String   // AREA | TIERED
+  price_per_sqm   Float?
+  usage_type      String   // personal | business | public
+  effective_from  DateTime
+  effective_to    DateTime?
+  is_latest       Boolean  @default(false)
+}
+
+model Discount {
+  id         String   @id @default(uuid())
+  company_id String
+  company    ManagementCompany @relation(fields: [company_id], references: [id])
+  house_id   String
+  house      House    @relation(fields: [house_id], references: [id])
+  percentage Float
+  one_time   Boolean
+  created_at DateTime @default(now())
+}
+
+model Bill {
+  id                 String   @id @default(uuid())
+  house_id           String
+  house              House    @relation(fields: [house_id], references: [id])
+  billing_period     String
+  current_version_id String?
+
+  versions           BillVersion[]
+}
+
+model BillVersion {
+  id                String   @id @default(uuid())
+  bill_id           String
+  bill              Bill     @relation(fields: [bill_id], references: [id])
+  calculated_amount Float
+  discount_applied  Float
+  overridden_amount Float?
+  created_by        String
+  created_at        DateTime @default(now())
+  reason            String?
+  is_latest         Boolean  @default(false)
+
+  invoices          Invoice[]
+}
+
+model Invoice {
+  id              String   @id @default(uuid())
+  bill_version_id String
+  bill_version    BillVersion @relation(fields: [bill_version_id], references: [id])
+  house_id        String
+  house           House    @relation(fields: [house_id], references: [id])
+  billing_period  String
+  status          String   // draft | issued | paid | voided
+  created_at      DateTime @default(now())
+
+  line_items      InvoiceLineItem[]
+}
+
+model InvoiceLineItem {
+  id               String   @id @default(uuid())
+  invoice_id       String
+  invoice          Invoice  @relation(fields: [invoice_id], references: [id])
+  house_identifier String
+  owner_name       String
+  amount           Float
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  user_id     String
+  user        User     @relation(fields: [user_id], references: [id])
+  action      String
+  entity_type String
+  entity_id   String
+  details     String
+  created_at  DateTime @default(now())
+}
