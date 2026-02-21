@@ -15,6 +15,7 @@ const menuItems = [
   { name: "账单与发票", href: "/billing", icon: "receipt_long" },
   { name: "公司档案", href: "/company", icon: "business" },
   { name: "用户权限", href: "/users", icon: "admin_panel_settings" },
+  { name: "统计报表", href: "/reports", icon: "bar_chart" },
   { name: "审计日志", href: "/audit-logs", icon: "security" },
 ];
 
