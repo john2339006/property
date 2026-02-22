@@ -261,3 +261,276 @@ model AuditLog {
 
   @@index([user_id, created_at])
 }
+
+// ─── Audit Tables ────────────────────────────────────────────────────────────
+// Each audit table records a snapshot of its source row whenever a row is
+// inserted, updated, or deleted.  `operation` is one of INSERT | UPDATE | DELETE.
+// `changed_by` stores the user ID (or a system label) responsible for the change.
+// These records are append-only and are never modified after insertion.
+
+model ManagementCompanyAudit {
+  audit_id                String        @id @default(uuid())
+  operation               String        // INSERT | UPDATE | DELETE
+  changed_by              String
+  changed_at              DateTime      @default(now())
+
+  // Snapshot of ManagementCompany fields
+  id                      String
+  legal_name              String
+  registration_license_id String
+  contact_information     String
+  billing_information     String
+  default_billing_period  BillingPeriod
+  currency                String
+  created_at              DateTime
+  updated_at              DateTime
+
+  @@index([id, changed_at])
+  @@map("management_company_audit")
+}
+
+model UserAudit {
+  audit_id                  String     @id @default(uuid())
+  operation                 String
+  changed_by                String
+  changed_at                DateTime   @default(now())
+
+  // Snapshot of User fields
+  id                        String
+  username                  String
+  password                  String
+  email                     String
+  name                      String?
+  role                      UserRole
+  status                    UserStatus
+  company_id                String
+  invitation_token          String?
+  invitation_expires_at     DateTime?
+  password_reset_token      String?
+  password_reset_expires_at DateTime?
+
+  @@index([id, changed_at])
+  @@map("user_audit")
+}
+
+model OwnerAudit {
+  audit_id           String     @id @default(uuid())
+  operation          String
+  changed_by         String
+  changed_at         DateTime   @default(now())
+
+  // Snapshot of Owner fields
+  id                 String
+  company_id         String
+  entity_type        EntityType
+  current_version_id String?
+
+  @@index([id, changed_at])
+  @@map("owner_audit")
+}
+
+model OwnerVersionAudit {
+  audit_id                 String    @id @default(uuid())
+  operation                String
+  changed_by               String
+  changed_at               DateTime  @default(now())
+
+  // Snapshot of OwnerVersion fields
+  id                       String
+  owner_id                 String
+  full_legal_name          String
+  id_number                String
+  tax_id                   String?
+  invoicing_name           String
+  phone                    String
+  email                    String
+  mailing_address          String
+  preferred_contact_method String
+  effective_from           DateTime
+  effective_to             DateTime?
+  is_latest                Boolean
+
+  @@index([id, changed_at])
+  @@map("owner_version_audit")
+}
+
+model HouseAudit {
+  audit_id              String      @id @default(uuid())
+  operation             String
+  changed_by            String
+  changed_at            DateTime    @default(now())
+
+  // Snapshot of House fields
+  id                    String
+  company_id            String
+  status                HouseStatus
+  management_start_date DateTime
+  management_end_date   DateTime?
+  current_version_id    String?
+
+  @@index([id, changed_at])
+  @@map("house_audit")
+}
+
+model HouseVersionAudit {
+  audit_id       String    @id @default(uuid())
+  operation      String
+  changed_by     String
+  changed_at     DateTime  @default(now())
+
+  // Snapshot of HouseVersion fields
+  id             String
+  house_id       String
+  building_no    String
+  unit_no        String
+  level_no       String
+  door_no        String
+  area_sqm       Float
+  effective_from DateTime
+  effective_to   DateTime?
+  is_latest      Boolean
+
+  @@index([id, changed_at])
+  @@map("house_version_audit")
+}
+
+model OwnershipAudit {
+  audit_id   String   @id @default(uuid())
+  operation  String
+  changed_by String
+  changed_at DateTime @default(now())
+
+  // Snapshot of Ownership fields
+  id         String
+  house_id   String
+  owner_id   String
+
+  @@index([id, changed_at])
+  @@map("ownership_audit")
+}
+
+model BillingTypeAudit {
+  audit_id           String   @id @default(uuid())
+  operation          String
+  changed_by         String
+  changed_at         DateTime @default(now())
+
+  // Snapshot of BillingType fields
+  id                 String
+  company_id         String
+  name               String
+  current_version_id String?
+
+  @@index([id, changed_at])
+  @@map("billing_type_audit")
+}
+
+model BillingTypeVersionAudit {
+  audit_id        String    @id @default(uuid())
+  operation       String
+  changed_by      String
+  changed_at      DateTime  @default(now())
+
+  // Snapshot of BillingTypeVersion fields
+  id              String
+  billing_type_id String
+  fee_model       FeeModel
+  price_per_sqm   Float?
+  usage_type      UsageType
+  effective_from  DateTime
+  effective_to    DateTime?
+  is_latest       Boolean
+
+  @@index([id, changed_at])
+  @@map("billing_type_version_audit")
+}
+
+model DiscountAudit {
+  audit_id   String   @id @default(uuid())
+  operation  String
+  changed_by String
+  changed_at DateTime @default(now())
+
+  // Snapshot of Discount fields
+  id         String
+  company_id String
+  house_id   String
+  percentage Float
+  one_time   Boolean
+  created_at DateTime
+
+  @@index([id, changed_at])
+  @@map("discount_audit")
+}
+
+model BillAudit {
+  audit_id           String   @id @default(uuid())
+  operation          String
+  changed_by         String
+  changed_at         DateTime @default(now())
+
+  // Snapshot of Bill fields
+  id                 String
+  house_id           String
+  billing_period     String
+  current_version_id String?
+
+  @@index([id, changed_at])
+  @@map("bill_audit")
+}
+
+model BillVersionAudit {
+  audit_id          String   @id @default(uuid())
+  operation         String
+  changed_by        String
+  changed_at        DateTime @default(now())
+
+  // Snapshot of BillVersion fields
+  id                String
+  bill_id           String
+  calculated_amount Float
+  discount_applied  Float
+  overridden_amount Float?
+  created_by        String
+  created_at        DateTime
+  reason            String?
+  is_latest         Boolean
+
+  @@index([id, changed_at])
+  @@map("bill_version_audit")
+}
+
+model InvoiceAudit {
+  audit_id        String        @id @default(uuid())
+  operation       String
+  changed_by      String
+  changed_at      DateTime      @default(now())
+
+  // Snapshot of Invoice fields
+  id              String
+  bill_version_id String
+  house_id        String
+  billing_period  String
+  status          InvoiceStatus
+  created_at      DateTime
+
+  @@index([id, changed_at])
+  @@map("invoice_audit")
+}
+
+model InvoiceLineItemAudit {
+  audit_id         String   @id @default(uuid())
+  operation        String
+  changed_by       String
+  changed_at       DateTime @default(now())
+
+  // Snapshot of InvoiceLineItem fields
+  id               String
+  invoice_id       String
+  house_identifier String
+  owner_name       String
+  amount           Float
+
+  @@index([id, changed_at])
+  @@map("invoice_line_item_audit")
+}
