@@ -83,11 +83,43 @@ Out of scope for this phase:
 
 ### 5.2 User Management
 #### 5.2.1 Authentication
-- Username + password
-- Email verification required
+- Email + password (email is the primary login identifier)
 - No SSO in current phase
+- Session management via NextAuth.js Credentials provider
 
-#### 5.2.2 Authorization
+#### 5.2.2 Login Flows
+
+**Flow 1 – Admin-Invited User**
+- A system/company admin adds a new user, which generates a unique invitation token stored on the user record
+- An invitation link containing the token is sent to the user's email (format: `/login?token=<token>&mode=invite`)
+- The user clicks the link, is shown a "Set Password" form pre-filled with their email
+- After setting a password the account status changes to `ACTIVE` and the user is automatically logged in
+
+**Flow 2 – Self-Registration**
+- A new user may create an account directly from the login page
+- Required fields: email address, display name, password
+- Optional fields: company ID (to join an existing company)
+- Account is created with status `ACTIVE` and the user is logged in immediately
+
+**Flow 3 – Standard Login**
+- User enters email address and password
+- On success, session is established and user is redirected to the dashboard
+- On failure, a clear error message is shown (invalid credentials)
+
+**Flow 4 – Forgot / Reset Password**
+- User clicks "Forgot password?" on the login page and enters their email
+- A password-reset token is generated and stored (link sent via email in production)
+- User navigates to `/login?token=<token>&mode=reset` and sets a new password
+- Token is invalidated after use or after 1 hour
+
+#### 5.2.3 User Status
+| Status | Description |
+| :--- | :--- |
+| `PENDING` | Invited by admin; password not yet set |
+| `ACTIVE` | Fully registered and can log in |
+| `SUSPENDED` | Account disabled by admin |
+
+#### 5.2.4 Authorization
 - Role-based access control (RBAC)
 - Row-level security by `company_id`
 

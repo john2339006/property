@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
 import clsx from "clsx";
+import { useState } from "react";
 
 const menuItems = [
   { name: "管理中心", href: "/", icon: "dashboard" },
@@ -19,8 +20,25 @@ const menuItems = [
   { name: "审计日志", href: "/audit-logs", icon: "security" },
 ];
 
+const ROLE_LABELS: Record<string, string> = {
+  PLATFORM_ADMIN: "平台管理员",
+  COMPANY_ADMIN: "公司管理员",
+  FINANCE: "财务",
+  OPERATOR: "操作员",
+  READ_ONLY: "只读",
+};
+
 export default function Sidebar() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const user = session?.user as
+    | { name?: string | null; email?: string | null; role?: string }
+    | undefined;
+
+  const displayName = user?.name ?? user?.email ?? "用户";
+  const roleLabel = user?.role ? (ROLE_LABELS[user.role] ?? user.role) : "—";
 
   return (
     <aside className="w-64 flex-shrink-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col z-20 transition-all duration-300 h-full">
@@ -57,9 +75,7 @@ export default function Sidebar() {
               <span
                 className={clsx(
                   "material-symbols-outlined text-[22px] transition-colors",
-                  isActive
-                    ? "fill-current"
-                    : "group-hover:text-primary"
+                  isActive ? "fill-current" : "group-hover:text-primary"
                 )}
               >
                 {item.icon}
@@ -80,26 +96,54 @@ export default function Sidebar() {
       </nav>
 
       {/* User Profile (Bottom Sidebar) */}
-      <div className="border-t border-border-light dark:border-border-dark p-4 shrink-0">
-        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 cursor-pointer transition-colors">
-          <div className="relative">
-            <Image
-              alt="Administrator profile picture"
-              className="w-9 h-9 rounded-full object-cover border border-border-light"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2TZfpP6uQikDy3gGJj5hSWjB8ArMop0jCq4WGJkf9lvvhlr5W6bN9nxOvo_wzvJMlYhze6Q5HgK2UGOa5F4jYnPWXCFpE4C1tITE2wjHPV0v6C26NLaWBKQQzWcxV4LzFBILgSQecr-1CLAQJPa210UB5LY38RIdabt_abfqPKWlf_OT0UqWeewyVO1o4y3_JyOzljW7r60WXhIrlZTUaX3EXJpfVSCfYBEdZKTv1jgCDKlXPkk1Fgkuv5dr_D9a23w4r7khRqCY"
-              width={36}
-              height={36}
-              unoptimized
-            />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border-2 border-white dark:border-gray-800"></span>
+      <div className="border-t border-border-light dark:border-border-dark p-4 shrink-0 relative">
+        <button
+          onClick={() => setShowUserMenu((v) => !v)}
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-background-light dark:hover:bg-gray-800 cursor-pointer transition-colors"
+        >
+          {/* Avatar */}
+          <div className="relative flex-shrink-0">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold text-sm">
+              {status === "loading"
+                ? "…"
+                : displayName.charAt(0).toUpperCase()}
+            </div>
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border-2 border-white dark:border-gray-800" />
           </div>
-          <div className="flex flex-col min-w-0">
+
+          {/* Info */}
+          <div className="flex flex-col min-w-0 flex-1 text-left">
             <p className="text-sm font-medium text-text-main dark:text-white truncate">
-              Admin User
+              {status === "loading" ? "..." : displayName}
             </p>
-            <p className="text-xs text-text-secondary truncate">系统管理员</p>
+            <p className="text-xs text-text-secondary truncate">{roleLabel}</p>
           </div>
-        </div>
+
+          <span className="material-symbols-outlined text-text-secondary text-[18px] flex-shrink-0">
+            {showUserMenu ? "expand_less" : "expand_more"}
+          </span>
+        </button>
+
+        {/* Dropdown menu */}
+        {showUserMenu && (
+          <div className="absolute bottom-full left-4 right-4 mb-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-xl overflow-hidden z-50">
+            <div className="px-4 py-3 border-b border-border-light dark:border-border-dark">
+              <p className="text-xs font-medium text-text-main dark:text-white truncate">
+                {displayName}
+              </p>
+              <p className="text-xs text-text-secondary truncate mt-0.5">
+                {user?.email}
+              </p>
+            </div>
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">logout</span>
+              退出登录 Sign Out
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );

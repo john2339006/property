@@ -15,6 +15,12 @@ enum UserRole {
   READ_ONLY
 }
 
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
 enum BillingPeriod {
   MONTHLY
   ANNUAL
@@ -68,14 +74,20 @@ model ManagementCompany {
 }
 
 model User {
-  id         String            @id @default(uuid())
-  username   String            @unique
-  password   String
-  email      String            @unique
-  role       UserRole
-  company_id String
-  company    ManagementCompany @relation(fields: [company_id], references: [id])
-  audit_logs AuditLog[]
+  id                        String            @id @default(uuid())
+  username                  String            @unique
+  password                  String
+  email                     String            @unique
+  name                      String?
+  role                      UserRole
+  status                    UserStatus        @default(ACTIVE)
+  company_id                String
+  company                   ManagementCompany @relation(fields: [company_id], references: [id])
+  invitation_token          String?           @unique
+  invitation_expires_at     DateTime?
+  password_reset_token      String?           @unique
+  password_reset_expires_at DateTime?
+  audit_logs                AuditLog[]
 
   @@index([email])
   @@index([username])

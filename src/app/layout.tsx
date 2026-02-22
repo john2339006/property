@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Noto_Sans_SC } from "next/font/google";
-import Sidebar from "@/components/Sidebar";
+import Providers from "@/components/Providers";
 import "./globals.css";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
@@ -29,12 +29,9 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${manrope.variable} ${notoSansSC.variable} font-sans bg-background-light dark:bg-background-dark text-text-main antialiased h-screen flex overflow-hidden`}
+        className={`${manrope.variable} ${notoSansSC.variable} font-sans bg-background-light dark:bg-background-dark text-text-main antialiased`}
       >
-        <Sidebar />
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-background-light dark:bg-background-dark">
-          {children}
-        </main>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
