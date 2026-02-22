@@ -26,7 +26,6 @@ export default function PropertyMapPage() {
                     <div>
                         <h1 className="text-xl font-bold text-text-main dark:text-white flex items-center gap-2">
                             可视化看盘
-                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-background-light text-text-secondary border border-border-light dark:bg-gray-800 dark:border-gray-700">Building View</span>
                         </h1>
                         <p className="text-sm text-text-secondary mt-1">实时查看楼宇入住情况与房产状态</p>
                     </div>
